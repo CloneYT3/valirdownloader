@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>The Shelf — ValirScans Downloader</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,400..600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&family=Archivo+Expanded:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark">⌗</span>
+        <span class="brand-name">The Shelf</span>
+      </div>
+      <div class="topbar-actions">
+        <button id="notifBtn" class="icon-btn" aria-label="Notifications">
+          <span class="bell">🔔</span>
+          <span id="notifBadge" class="badge hidden">0</span>
+        </button>
+        <button id="readingBtn" class="text-btn">Reading</button>
+        <div class="overflow-wrap">
+          <button id="moreBtn" class="icon-btn" aria-label="More">⋯</button>
+          <div id="moreMenu" class="overflow-menu hidden">
+            <button id="watchlistBtn" class="overflow-item">Watchlist</button>
+            <button id="filesBtn" class="overflow-item">My Files</button>
+            <button id="settingsBtn" class="overflow-item">Settings</button>
+            <button id="refreshBtn" class="overflow-item">Refresh Library</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main id="view-library" class="view">
+      <div class="hero-stats">
+        <div class="hero-ring-wrap">
+          <svg viewBox="0 0 64 64" width="72" height="72">
+            <defs>
+              <linearGradient id="heroGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ff5a36" />
+                <stop offset="100%" stop-color="#ffb088" />
+              </linearGradient>
+            </defs>
+            <circle class="hero-ring-bg" cx="32" cy="32" r="27" />
+            <circle id="progressRingFill" class="hero-ring-fill" cx="32" cy="32" r="27" />
+          </svg>
+          <span id="progressPct" class="hero-ring-pct">0%</span>
+        </div>
+        <div class="hero-stat-block">
+          <p class="hero-eyebrow">The conquest</p>
+          <h1 class="hero-headline">Clearing the shelf.</h1>
+          <p id="progressSublabel" class="hero-sub">Just getting started</p>
+        </div>
+        <div class="hero-tally">
+          <div class="tally-item">
+            <span id="tallyReading" class="tally-num reading-color">0</span>
+            <span class="tally-label">Reading</span>
+          </div>
+          <div class="tally-item">
+            <span id="tallyCompleted" class="tally-num completed-color">0</span>
+            <span class="tally-label">Completed</span>
+          </div>
+          <div class="tally-item">
+            <span id="tallyRemaining" class="tally-num unread-color">0</span>
+            <span class="tally-label">Remaining</span>
+          </div>
+        </div>
+      </div>
+      <span id="progressLabel" class="hidden"></span>
+      <div id="searchRow" class="search-row">
+        <input id="searchInput" type="search" placeholder="Search the shelf… (press /)" autocomplete="off" />
+        <button id="surpriseBtn" class="surprise-btn" title="Jump to a random series">Surprise me</button>
+      </div>
+      <div id="filterBar" class="filter-bar">
+        <select id="genreFilter"><option value="">All genres</option></select>
+        <select id="typeFilter">
+          <option value="">All types</option>
+          <option value="MANHWA">Manhwa</option>
+          <option value="MANGA">Manga</option>
+          <option value="MANHUA">Manhua</option>
+          <option value="WEB NOVEL">Web Novel</option>
+        </select>
+        <select id="statusFilter">
+          <option value="">Any status</option>
+          <option value="ONGOING">Ongoing</option>
+          <option value="COMPLETED">Completed</option>
+          <option value="HIATUS">Hiatus</option>
+          <option value="CANCELLED">Cancelled</option>
+        </select>
+        <select id="sortSelect">
+          <option value="updated">Recently updated</option>
+          <option value="name">Name (A–Z)</option>
+          <option value="name_desc">Name (Z–A)</option>
+          <option value="chapters">Most chapters</option>
+          <option value="chapters_asc">Fewest chapters</option>
+          <option value="rating">Highest rated</option>
+        </select>
+        <select id="progressFilter">
+          <option value="">My progress: all</option>
+          <option value="reading">Reading</option>
+          <option value="completed">Completed</option>
+          <option value="unread">Not started</option>
+        </select>
+      </div>
+      <div id="libraryStatus" class="status-line"></div>
+      <div id="seriesGrid" class="series-grid"></div>
+    </main>
+
+    <main id="view-series" class="view hidden">
+      <button id="backBtn" class="back-btn">← Back to shelf</button>
+      <div id="seriesDetail"></div>
+    </main>
+
+    <aside id="notifPanel" class="panel hidden">
+      <div class="panel-header">
+        <h2>New chapters</h2>
+        <button class="panel-close" data-close="notifPanel">×</button>
+      </div>
+      <div id="notifList" class="panel-body"></div>
+    </aside>
+
+    <aside id="watchlistPanel" class="panel hidden">
+      <div class="panel-header">
+        <h2>Watchlist</h2>
+        <button class="panel-close" data-close="watchlistPanel">×</button>
+      </div>
+      <div id="watchlistBody" class="panel-body"></div>
+    </aside>
+
+    <aside id="readingPanel" class="panel hidden">
+      <div class="panel-header">
+        <h2>Currently Reading</h2>
+        <button class="panel-close" data-close="readingPanel">×</button>
+      </div>
+      <div id="readingBody" class="panel-body"></div>
+    </aside>
+
+    <aside id="filesPanel" class="panel hidden">
+      <div class="panel-header">
+        <h2>My Files</h2>
+        <button class="panel-close" data-close="filesPanel">×</button>
+      </div>
+      <div id="filesBody" class="panel-body">
+        <p class="files-hint">
+          Open this page on your phone (same Wi-Fi) and tap any file
+          below to save it directly — no cable or AirDrop needed.
+        </p>
+        <div id="filesList"></div>
+      </div>
+    </aside>
+
+    <aside id="settingsPanel" class="panel hidden">
+      <div class="panel-header">
+        <h2>Settings</h2>
+        <button class="panel-close" data-close="settingsPanel">×</button>
+      </div>
+      <div class="panel-body">
+        <label class="settings-label" for="preloadCount">
+          Cover images to pre-load ahead of view
+        </label>
+        <input type="range" id="preloadCount" min="1" max="5" step="1" />
+        <div class="settings-value"><span id="preloadCountValue">2</span> image(s)</div>
+        <p class="settings-hint">
+          Higher values may load the shelf a little faster when scrolling,
+          but use more bandwidth and disk cache space up front.
+        </p>
+      </div>
+    </aside>
+
+    <div id="overlay" class="overlay hidden"></div>
+
+    <div id="downloadToast" class="toast hidden">
+      <div class="toast-label" id="toastLabel">Preparing…</div>
+      <div class="toast-bar"><div id="toastBarFill" class="toast-bar-fill"></div></div>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>

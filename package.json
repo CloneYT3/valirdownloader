@@ -1,0 +1,24 @@
+{
+  "name": "valirscans-downloader",
+  "version": "1.0.0",
+  "description": "Self-hosted web app for browsing ValirScans and downloading chapters as CBZ files for use in Suwatte.",
+  "main": "server/index.js",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node server/index.js",
+    "test": "node test-scraping.js && node test-cbz.js && node test-server.js && node test-watchlist.js && node test-filters.js && node test-epub.js && node test-novel-fallback.js && node test-pagination-bug.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "archiver": "^7.0.1",
+    "epub-gen-memory": "^1.1.2",
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "adm-zip": "^0.5.17"
+  }
+}
